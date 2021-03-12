@@ -6,7 +6,6 @@ import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
-
 def gen_password():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
                'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -37,18 +36,43 @@ def save_pass():
                 "password": password
             }
         }
-        with open(file="password_data.json", mode="r") as passData:
-            data = json.load(passData)
+        try:
+            with open(file="password_data.json", mode="r") as passData:
+                data = json.load(passData)
+        except FileNotFoundError:
+            with open(file="password_data.json", mode="w") as passData:
+                json.dump(new_data, passData, indent=2)
+        else:
             data.update(new_data)
-            json.dump(data, passData, indent=2)
-        websiteText.delete(0, END)
-        emailText.delete(0, END)
-        passwordText.delete(0, END)
-        websiteText.focus()
+            with open(file="password_data.json", mode="w") as passData:
+                json.dump(data, passData, indent=2)
+        finally:
+            websiteText.delete(0, END)
+            emailText.delete(0, END)
+            passwordText.delete(0, END)
+            websiteText.focus()
     else:
         messagebox.showwarning(
             title="Error Validating", message="Please Ensure all Validation Checks are met with.")
 
+# ---------------------------- SAVE PASSWORD ------------------------------- #
+
+def search_websites():
+    try:
+        with open(file="password_data.json", mode="r") as passData:
+            data = json.load(passData)
+    except FileNotFoundError: 
+        messagebox.showwarning(title="Error Fetching Data", message="You Haven't Saved any Passwords Previously")
+    else:
+        searchText = str(websiteText.get()).lower()
+        if(len(searchText) > 0):
+            for (key, vals) in data.items():
+                if (searchText == key):
+                    email = vals["email"]
+                    password = vals["password"]
+                    messagebox.showinfo(title=f"{key}", message=f"You have Saved the Following Details\n Email: {email}\n Password: {password}")    
+        else:
+            messagebox.showwarning(title="Error", message="Enter a Website name to Search")
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -72,7 +96,7 @@ websiteText = Entry(width=70)
 websiteText.focus()
 websiteText.grid(row=2, column=1)
 
-websiteSearch = Button(text="Search", width=15)
+websiteSearch = Button(text="Search", width=15, command=search_websites)
 websiteSearch.grid(row=2, column=2)
 
 emailLabel = Label(text="Email/Username: ", width=25)
