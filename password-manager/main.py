@@ -2,11 +2,14 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
+
 def gen_password():
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
+               'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
     password_letters = [random.choice(letters) for char in range(0, 8+1)]
@@ -20,6 +23,7 @@ def gen_password():
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
+
 def save_pass():
     name = str(websiteText.get())
     email = str(emailText.get())
@@ -27,17 +31,24 @@ def save_pass():
     validated = len(name) > 0 and len(email) > 0 and len(password) > 1
     if validated:
         passString = f"{name} | {email} | {password}\n"
-        is_ok = messagebox.askyesno(title=name, message=f"These are the Details Entered: \nEmail: {email} \nPassword: {password} \nIs it ok to Save ?")
-        if (is_ok):
-            with open(file="password_data.txt", mode="a") as passData:
-                passData.write(passString)
-            websiteText.delete(0, END)
-            emailText.delete(0, END)
-            passwordText.delete(0, END)
-            websiteText.focus()
+        new_data = {
+            name: {
+                "email": email,
+                "password": password
+            }
+        }
+        with open(file="password_data.json", mode="r") as passData:
+            data = json.load(passData)
+            data.update(new_data)
+            json.dump(data, passData, indent=2)
+        websiteText.delete(0, END)
+        emailText.delete(0, END)
+        passwordText.delete(0, END)
+        websiteText.focus()
     else:
-        messagebox.showwarning(title="Error Validating", message="Please Ensure all Validation Checks are met with.")
-    
+        messagebox.showwarning(
+            title="Error Validating", message="Please Ensure all Validation Checks are met with.")
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -45,20 +56,24 @@ window = Tk()
 window.title("Password Manager")
 window.config(padx=120, pady=80)
 
-headline = Label(text="Manage Your Passwords Efficiently", font=("Courier New", 15, "bold"))
+headline = Label(text="Manage Your Passwords Efficiently",
+                 font=("Courier New", 15, "bold"))
 headline.grid(row=0, column=1)
 
 canvas = Canvas(width=200, height=200, highlightthickness=0)
 passPhoto = PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=passPhoto)
-canvas.grid(row=1,column=1)
+canvas.grid(row=1, column=1)
 
 websiteLabel = Label(text="Website: ", width=25)
 websiteLabel.grid(row=2, column=0)
 
-websiteText = Entry(width=90)
+websiteText = Entry(width=70)
 websiteText.focus()
-websiteText.grid(row=2, column=1, columnspan=2)
+websiteText.grid(row=2, column=1)
+
+websiteSearch = Button(text="Search", width=15)
+websiteSearch.grid(row=2, column=2)
 
 emailLabel = Label(text="Email/Username: ", width=25)
 emailLabel.grid(row=3, column=0)
