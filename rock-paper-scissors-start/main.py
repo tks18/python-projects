@@ -1,31 +1,31 @@
 import random
 
-rock = '''
+rock = """
     _______
 ---'   ____)
       (_____)
       (_____)
       (____)
 ---.__(___)
-'''
+"""
 
-paper = '''
+paper = """
     _______
 ---'   ____)____
           ______)
           _______)
          _______)
 ---.__________)
-'''
+"""
 
-scissors = '''
+scissors = """
     _______
 ---'   ____)____
           ______)
        __________)
       (____)
 ---.__(___)
-'''
+"""
 
 options = [rock, paper, scissors]
 wordOpt = ["rock", "paper", "scissors"]
@@ -36,25 +36,25 @@ compOption = options[rand_int]
 userWordOpt = wordOpt[inp]
 compWordOpt = wordOpt[rand_int]
 
-all_res = f'''
+all_res = f"""
  Computer Chose {compWordOpt}
  {compOption}
  You Chose {userWordOpt}
  {userOption}
-'''
+"""
 
-if(compWordOpt == userWordOpt):
-  print(all_res)
-  print("Its a Draw")
+if compWordOpt == userWordOpt:
+    print(all_res)
+    print("Its a Draw")
 elif userWordOpt == "paper" and compWordOpt == "rock":
-  print(all_res)
-  print("You won")
+    print(all_res)
+    print("You won")
 elif userWordOpt == "rock" and compWordOpt == "scissors":
-  print(all_res)
-  print("You Won")
+    print(all_res)
+    print("You Won")
 elif userWordOpt == "scissors" and compWordOpt == "paper":
-  print(all_res)
-  print("You won")
+    print(all_res)
+    print("You won")
 else:
-  print(all_res)
-  print("You Lose")
+    print(all_res)
+    print("You Lose")
